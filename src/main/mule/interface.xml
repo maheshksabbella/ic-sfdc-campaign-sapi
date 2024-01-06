@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd ">
+    
+    <flow name="ic-sfdc-campaign-sapi-main">
+        <http:listener config-ref="ic-sfdc-campaign-sapi-httpListenerConfig" path="/api/*">
+            <http:response statusCode="#[vars.httpStatus default 200]">
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:response>
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body>#[payload]</http:body>
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:error-response>
+        </http:listener>
+        <apikit:router config-ref="ic-sfdc-campaign-sapi-config" />
+		<error-handler ref="Error_Handler" />
+    </flow>
+    <flow name="ic-sfdc-campaign-sapi-console">
+        <http:listener config-ref="ic-sfdc-campaign-sapi-httpListenerConfig" path="/console/*">
+            <http:response statusCode="#[vars.httpStatus default 200]">
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:response>
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body>#[payload]</http:body>
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:error-response>
+        </http:listener>
+        <apikit:console config-ref="ic-sfdc-campaign-sapi-config" />
+        <error-handler>
+            <on-error-propagate type="APIKIT:NOT_FOUND">
+                <ee:transform doc:name="Transform Message">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Resource not found"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">404</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+        </error-handler>
+    </flow>
+    <flow name="put:\compaigne\(id):application\json:ic-sfdc-campaign-sapi-config">
+		<flow-ref doc:name="Flow Reference" doc:id="febae0a2-6932-4ffe-83dc-07e7497e20db" name="putCampaignFlow"/>
+    </flow>
+    <flow name="delete:\compaigne\(id):ic-sfdc-campaign-sapi-config">
+		<flow-ref doc:name="Flow Reference" doc:id="c9b22418-c24c-4f2b-9fe0-b0d0ecfab8eb" name="deleteCampaignFlow"/>
+    </flow>
+    <flow name="get:\compaigne:ic-sfdc-campaign-sapi-config">
+		<flow-ref doc:name="Flow Reference" doc:id="be06974c-be7e-4b13-b090-210c45f1cea8" name="getCampaignFlow"/>
+    </flow>
+    <flow name="get:\compaigne\(id):ic-sfdc-campaign-sapi-config">
+		<flow-ref doc:name="Flow Reference" doc:id="86209595-2f8d-44ec-b5e2-dd43d7dc9611" name="getCampaignFlowById"/>
+    </flow>
+    <flow name="post:\compaigne:application\json:ic-sfdc-campaign-sapi-config">
+		<flow-ref doc:name="Flow Reference" doc:id="8f5581c2-1a1b-403a-a243-9099fa8e05a8" name="createCampaignFow"/>
+    </flow>
+</mule>

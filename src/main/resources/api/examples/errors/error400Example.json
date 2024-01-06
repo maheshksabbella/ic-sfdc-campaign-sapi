@@ -1,0 +1,10 @@
+{
+  "is_success": false,
+  "errors":[
+    {
+    "errror_message": "Bad request",
+    "error_code": "400"
+  
+    }
+  ]
+}

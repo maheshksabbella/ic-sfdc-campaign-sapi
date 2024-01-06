@@ -1,0 +1,10 @@
+{
+  "is_success": false,
+  "errors":[
+    {
+    "errror_message": "Page Not Found",
+    "error_code": "404"
+  
+    }
+  ]
+}

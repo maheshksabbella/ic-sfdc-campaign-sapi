@@ -1,0 +1,18 @@
+#%RAML 1.0 Library
+types:
+  account:
+    type: object
+    properties:
+      name: string
+      phone: string
+      shipping_city: string
+      shipping_street: string
+      shipping_country: string
+      shipping_postal_code: string
+      billing_city: string
+      billing_street: string
+      billing_country: string
+      billing_postal_code: string
+  accountArray:
+    type: array
+    items: account

@@ -1,0 +1,68 @@
+#%RAML 1.0
+title: ic-sfdc-account-sapi
+version: v1
+description: This is an api pto integarte with account object in salesforce
+protocols: [http,https]
+mediaType:
+  - application/json
+
+traits:
+   client-id-required:
+      headers:
+        client_id:
+          type: string
+        client_secret:
+          type: string
+      responses:
+        401:
+          description: Unauthorized or invalid client application credentials
+        500:
+          description: Bad response from authorization server, or WSDL SOAP Fault error
+
+
+resourceTypes:
+  AllCollection: !include /resourceTypes/AllResourceTypes.raml
+
+uses:
+  getResponseSchema: /resources/libraries/GetResponseSchema.raml 
+  postRequestSchema: /resources/libraries/PostRequestSchema.raml
+  postResponseSchema: /resources/libraries/PostResponseSchema.raml
+  deleteResponseSchema: /resources/libraries/DeleteResponseSchema.raml
+  errorSchema: /resources/libraries/ErrorSchema.raml
+
+/account:
+  is:
+    - client-id-required
+  type:
+    AllCollection:
+      get-response-schema: getResponseSchema.accountArray
+      get-response-example: !include /examples/responses/getAccountResponsesExample.json
+      errors-schema: errorSchema.error
+      post-request-schema: postRequestSchema.request
+      post-request-example: !include /examples/requests/postAccountRequestExample.json
+      post-response-schema: postResponseSchema.postresponse
+      post-response-example: !include /examples/responses/postAccountResponseExample.json
+  get:
+  post:
+
+  /{id}:
+    is:
+      - client-id-required
+    type:
+      AllCollection:
+        get-response-schema: getResponseSchema.accountArray
+        get-response-example: !include /examples/responses/getAccountResponseExample.json
+        errors-schema: errorSchema.error
+        put-request-schema: postRequestSchema.request
+        put-request-example: !include /examples/requests/postAccountRequestExample.json
+        put-response-schema: postResponseSchema.postresponse
+        put-response-example: !include /examples/responses/postAccountResponseExample.json
+        delete-response-schema: deleteResponseSchema.deleteresponse
+        delete-response-example: !include /examples/responses/deleteAccoutResponseExample.json
+    get:
+    put:
+    delete:
+
+
+
+

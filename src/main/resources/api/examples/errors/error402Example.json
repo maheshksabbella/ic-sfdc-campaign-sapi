@@ -1,0 +1,10 @@
+{
+  "is_success": false,
+  "errors":[
+    {
+    "errror_message": "Payment required",
+    "error_code": "402"
+  
+    }
+  ]
+}
